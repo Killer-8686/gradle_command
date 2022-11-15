@@ -1,0 +1,92 @@
+GRADLE
+
+build.gradle
+
+plugins{
+
+	id 'java'
+	id 'idea'
+	id "io.spring.dependency-management" veriosn "1.0.11.RELEASE"
+}
+
+sourceCompatibility = JavaVersion.VESSION_15
+targetCompatibility = JavaVersion.VESSION_15
+
+idea{
+	project {
+		languageLevel = 15
+	}
+	module {
+		downloadJavadoc = true
+		downloadSources = true
+	}
+}
+
+repositories {
+	mavenCentral()	
+}
+
+dependencyManagement {
+	imports {
+		mavenBom 'org.sprinframewowk.boot:spring-boot-dependencies:2.5.4'
+	}
+}
+
+dependencies {
+	implementation 'com.google.guava:30.1.1-jre'
+	implementation 'ch.qos.logback:logback-classic'
+}
+
+shadowJar {
+	archiveBaseName.set('gradleHelloWorld')
+	archiveVersion.set('0.1')
+	archiveClassifier.set('')
+	manifest {
+		attributes 'Main-Class': 'ru.demo.Application'
+	}
+}
+
+tasks.build.dependsOn tasks.shadowJar
+
+task managedVersions {
+		doLast {
+			dependencyManagement.managedVersions.each {
+				println it
+			}
+		}
+	}
+
+test{
+	useJUnitPlatform()
+}
+
+
+Основные единицы работы gradle - tasks и projects.
+
+Task:
+
+task hello {
+	doLast {
+		println 'Hello World!'
+	}
+}
+
+Конфигурация таски: 
+	1) doFirst() doLast() - дествия, совершаемые в начале и конце выполнения таски
+	2) description - описание таски
+	3) group- имя грппы тасков
+	4) extra properties
+
+
+Фазы сборки:
+
+Инициализация			Проверяет какие проекты будут участвовать в билде и создает инстансы Project
+settings.gradle запускается первым на этом этапе. Анализируются мульти-модули.
+
+Конфигурация			Запускаются все скрипты build.gradle у каждого проекта и опрделяются такси проектов, строится граф тасок
+Проходится по каждому проекту и запускается build у каждого проекта. Можно подписаться (evaluate). 
+
+Выполнение				Запуск тасок в нужном порядке на основе графа.
+Выполнение тасок по графу, построенному выше.
+
+
